@@ -1,5 +1,6 @@
 ﻿#include "raylib.h"
 #include "headers/Simulation.hpp"
+#include "clay.h"
 
 using namespace std;
 
