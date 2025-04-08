@@ -1,1 +1,1 @@
-# Automate Similator
+# Automate Simulator
