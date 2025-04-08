@@ -32,7 +32,7 @@ endif()
 
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (GraphSimulation 
+add_executable (AutomataSimulation  
     "src/Main.cpp"
     "src/State.cpp"
     "src/Statetype.cpp"
@@ -47,11 +47,12 @@ target_link_libraries(${PROJECT_NAME} raylib)
 # Inclure les dossiers d'en-têtes
 include_directories(
     "src/headers/"
+    "src/thirdparty/"
     "${CMAKE_SOURCE_DIR}"  # Pour inclure les fichiers d'en-tête à la racine du projet
 )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET GraphSimulation PROPERTY CXX_STANDARD 20)
+  set_property(TARGET AutomataSimulation PROPERTY CXX_STANDARD 20)
 endif()
 
 # TODO: Ajoutez des tests et installez des cibles si nécessaire.
