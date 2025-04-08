@@ -1,0 +1,8 @@
+.vs
+.vscode
+build 
+caca
+out
+test
+logs.txt
+CMakePresets.json
