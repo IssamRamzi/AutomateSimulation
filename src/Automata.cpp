@@ -106,7 +106,7 @@ State& Automata::getStateByClick() {
         if (mousePos.x <= statePos.x + State::radius && mousePos.x >= statePos.x - State::radius &&
             mousePos.y <= statePos.y + State::radius && mousePos.y >= statePos.y - State::radius)
         {
-            return state; // Retourne la référence à l'état sélectionné
+            return state; 
         }
     }
 
