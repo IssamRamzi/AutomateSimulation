@@ -1,5 +1,5 @@
 #include "headers/Automata.hpp"
-
+#include <cmath>
 
 Automata::Automata()
 {
@@ -17,17 +17,33 @@ std::vector<State> Automata::getStates(){
 // Mettre à jour tous les éléments de l'automate (états, liens, etc.)
 void Automata::updateAll()
 {
+    if(IsKeyPressed(KEY_DELETE)){
+        reset();
+    }
+
+    // Ajout etat
     if (IsMouseButtonPressed(MouseButton::MOUSE_BUTTON_LEFT))
     {
         addState();
     }
+
+    // Etat init
     if (IsKeyPressed(KEY_C) && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
         State& state = getStateByClick();
         state.changeType();
+        if(state.getType() == StateType::INITIAL){
+            initialState = state;
+            for(auto& s : states){
+                if(s.getType() == StateType::INITIAL && s.getValue() != state.getValue()){
+                    s.setType(StateType::NORMAL);
+                }
+            }
+        }
         std::cout << "change type " << state.getValue() << " : " << state.getType() << std::endl;
     }
-    // Clic droit : on récupère un noeud
+
+    // Ajout noeud
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && statesToLink.size() != 2) {
         State state = getStateByClick();
         statesToLink.emplace_back(state);
@@ -39,6 +55,8 @@ void Automata::updateAll()
             addLink(statesToLink[0], statesToLink[1], key);
         }
     }
+
+
 }
 
 // Dessiner tous les éléments de l'automate

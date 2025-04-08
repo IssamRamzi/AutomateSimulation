@@ -112,3 +112,7 @@ void State::drawArrow(Vector2 start, Vector2 end, Color color) {
     // Draw the arrowhead as a filled triangle
     DrawTriangle(end, left, right, color);
 }
+
+void State::setType(StateType t){
+    type = t;
+}

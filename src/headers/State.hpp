@@ -29,6 +29,7 @@ public:
     
     
     void changeType();
+    void setType(StateType t);
     
 
 private:

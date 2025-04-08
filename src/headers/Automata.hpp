@@ -6,12 +6,13 @@
 
 class Automata {
 private:
-
+    State initialState;
     std::vector<State> states;
     std::vector<Transition> transitions;
     std::vector<State> statesToLink;
     int currentStateValue = 0;
 
+        
 
     static const int minDistance = 80;
 public:
