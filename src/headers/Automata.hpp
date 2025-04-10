@@ -12,7 +12,7 @@ private:
     std::vector<State> statesToLink;
     int currentStateValue = 0;
 
-        
+    // std::string word;
 
     static const int minDistance = 80;
 public:
@@ -44,6 +44,8 @@ public:
     // 
     State& getStateByClick();
     State& getStateByHover();
+
+    bool readWord();
 
     
 };

@@ -8,7 +8,7 @@
 State::State(Vector2 position, int value) : position(position), value(value), type(StateType::NORMAL) {
 }
 
-State::State(){
+State::State() : value(-1){
 
 }
 
@@ -58,7 +58,7 @@ void State::addSuccessor(State state, char value){
             return;
         }
     }
-    successors.push_back(std::make_pair(state, value));
+    successors.emplace_back(std::make_pair(state, value));
     std::cout << "Ajout du successeur (" << state.getValue() << ") à l'état " << value << std::endl;
 }
 
@@ -67,7 +67,7 @@ void State::printSucc(){
     for(auto succ : successors){
         std::cout << succ.first.value << " ";
     }
-    std::cout<< value << "]" << std::endl;
+    std::cout<< value << " ]" << std::endl;
 
 }
 

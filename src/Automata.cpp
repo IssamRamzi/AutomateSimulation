@@ -1,5 +1,6 @@
 #include "headers/Automata.hpp"
 #include <cmath>
+#include "string"
 
 Automata::Automata()
 {
@@ -43,9 +44,10 @@ void Automata::updateAll()
         std::cout << "change type " << state.getValue() << " : " << state.getType() << std::endl;
     }
 
-    // Ajout noeud
+    // Ajout transition
     if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) && statesToLink.size() != 2) {
         State state = getStateByClick();
+        if(state.getValue() == -1) return;
         statesToLink.emplace_back(state);
     }
     if (statesToLink.size() == 2) {
@@ -56,6 +58,10 @@ void Automata::updateAll()
         }
     }
 
+    //read
+    if(IsKeyPressed(KEY_ENTER)){
+        readWord();
+    }
 
 }
 
@@ -115,9 +121,14 @@ void Automata::addLink(State startState, State endState, char symbol)
 // Supprimer tous les états et liens de l'automate
 void Automata::deleteAll()
 {
+    initialState = State();
+    states.clear();
+    transitions.clear();
+    statesToLink.clear();
+    currentStateValue = 0;
 }
 
-State& Automata::getStateByClick() {
+State& Automata::getStateByClick() { 
     Vector2 mousePos = GetMousePosition();
     for (auto &state : states) {
         Vector2 statePos = state.getPosition();
@@ -128,6 +139,41 @@ State& Automata::getStateByClick() {
         }
     }
 
-    throw std::runtime_error("No state found at the clicked position.");
+    std::cout << "No state found at the clicked position." << std::endl; //! Fixed
+    static State nullState; 
+    return nullState;
 }
 
+
+bool Automata::readWord() {
+    std::string word = "a";
+    State curr = initialState;
+    
+    for (char c : word) {
+        curr.printSucc();
+        bool found = false;
+        std::cout << curr.successors.size();
+        for (auto [nextState, symbol] : curr.successors) {
+            std::cout << "Inside ReadWordLoop" << std::endl;
+            if (symbol == c) {
+                curr = nextState;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            std::cout << "ne reconnait pas 1" << std::endl;
+            return false;
+        }
+    }
+
+    if (curr.getType() == StateType::FINALE) {
+        std::cout << "reconnait le mot" << std::endl;
+        return true;
+    } else {
+        std::cout << "ne reconnait pas 2" << std::endl;
+        return false;
+    }
+    return false;
+}

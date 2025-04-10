@@ -31,13 +31,13 @@ public:
     void changeType();
     void setType(StateType t);
     
+    std::vector<std::pair<State, char>> successors;
 
 private:
     Vector2 position;
     int value;
     StateType type;
 
-    std::vector<std::pair<State, char>> successors;
 
     void drawArrow(Vector2 start, Vector2 end, Color color);
 
