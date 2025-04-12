@@ -23,7 +23,7 @@ void DrawUI(Simulation sim) {
 
 int main()
 {
-    InitWindow(windowWidth, windowHeight, "Graph Simulation");
+    InitWindow(windowWidth, windowHeight, "Automata Simulation");
     SetTargetFPS(60);
     Simulation simulation;
     while (!WindowShouldClose()) {

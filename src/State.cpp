@@ -16,20 +16,20 @@ State::~State() {
     
 }
 
-Vector2 State::getPosition() {
+Vector2 State::getPosition() const {
 	return position;
 }
 
-int State::getValue() {
+int State::getValue() const {
 	return value;
 }
 
-StateType State::getType(){
+StateType State::getType() const {
     return type;
 }
 
 
-void State::draw()  {
+void State::draw() const { // Fully Func
     Color stateColor;
     switch (type) {
         case StateType::INITIAL:
@@ -59,11 +59,12 @@ void State::addSuccessor(State state, char value){
         }
     }
     successors.emplace_back(std::make_pair(state, value));
-    std::cout << "Ajout du successeur (" << state.getValue() << ") à l'état " << value << std::endl;
+    // std::cout << "Ajout du successeur (" << state.getValue() << ") à l'état " << value << std::endl;
 }
 
 void State::printSucc(){
-    std::cout<< value << "[ ";
+
+    std::cout<< "Le nombre de successeur de : " << value << "est : "<< successors.size() <<"[ ";
     for(auto succ : successors){
         std::cout << succ.first.value << " ";
     }
@@ -87,7 +88,7 @@ void State::changeType() {
     }
 }
 
-void State::drawArrow(Vector2 start, Vector2 end, Color color) {
+void State::drawArrow(Vector2 start, Vector2 end, Color color) const {
     // Draw the main line
     DrawLineEx(start, end, 2.0f, color);
 
@@ -115,4 +116,8 @@ void State::drawArrow(Vector2 start, Vector2 end, Color color) {
 
 void State::setType(StateType t){
     type = t;
+}
+
+void State::setPosition(Vector2 newPosition){
+    position = newPosition;
 }

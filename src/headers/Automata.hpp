@@ -6,11 +6,11 @@
 
 class Automata {
 private:
-    State initialState;
+    int initialStateIndex; // Index de l'état initial au lieu d'une copie
     std::vector<State> states;
     std::vector<Transition> transitions;
     std::vector<State> statesToLink;
-    int currentStateValue = 0;
+    int currentStateValue = 1;
 
     // std::string word;
 
@@ -20,8 +20,10 @@ public:
     ~Automata();
 
     // Getters
-    std::vector<State> getStates();
-
+    const std::vector<State>& getStates() const;
+    const State& getStateByIndex(int index) const;
+    int findStateIndex(int value) const; // Trouve l'index d'un état par sa valeur
+    int getInitialStateIndex() const { return initialStateIndex; } // Getter pour l'index de l'état initial
 
     // Mettre à jour tous les éléments de l'automate (états, liens, etc.)
     void updateAll();

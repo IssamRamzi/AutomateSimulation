@@ -12,12 +12,12 @@ public:
     State();
     ~State();
 
-    Vector2 getPosition();
-    int getValue();
-    StateType getType();
+    Vector2 getPosition() const;
+    int getValue() const;
+    StateType getType() const;
 
     // affichage
-    void draw();
+    void draw() const;
 
     // ajouter un successeur
     void addSuccessor(State state, char value);
@@ -30,6 +30,7 @@ public:
     
     void changeType();
     void setType(StateType t);
+    void setPosition(Vector2 newposition);
     
     std::vector<std::pair<State, char>> successors;
 
@@ -39,6 +40,6 @@ private:
     StateType type;
 
 
-    void drawArrow(Vector2 start, Vector2 end, Color color);
+    void drawArrow(Vector2 start, Vector2 end, Color color) const;
 
 };

@@ -3,19 +3,20 @@
 #include "raylib.h"
 #include <vector>
 
+class Automata; // Déclaration anticipée
+
 class Transition {
 public:
-	Transition(State state1, State state2, char value);
+	Transition(int startStateIndex, int endStateIndex, char value, Automata* automata);
 	~Transition();
 
 	// Méthodes de dessin
-	void draw();
+	void draw() const;
 
 private:
-	State startState;
-	State endState;
+	int startStateIndex;
+	int endStateIndex;
 	char symbol;
 	float distance;
-
-	float calculateDistance(Vector2 v1, Vector2 v2);
+	Automata* parentAutomata; // Référence à l'automate parent pour accéder aux états
 }; 
