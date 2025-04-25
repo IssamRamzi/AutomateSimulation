@@ -1,66 +1,84 @@
-﻿#include "raylib.h"
-#include "headers/Simulation.hpp"
-#include "clay.h"
+﻿#include "clayman.hpp"
+#include "raylib.h"
+#include "./thirdparty/raylib/clay_renderer_raylib.c"
 
+//Your project's main entry
+int main(void) {
+    
+    //Reserve memory for raylib fonts
+    Font fonts[1];
 
-using namespace std;
+    //Initialize ClayMan object using the constructor
+    ClayMan clayMan(1024, 786, Raylib_MeasureText, fonts);
 
-const int windowWidth = 1280;
-const int windowHeight = 720;
+    //Initialize Raylib
+    Clay_Raylib_Initialize(
+        clayMan.getWindowWidth(), 
+        clayMan.getWindowHeight(), 
+        "Your Project Title", 
+        FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT
+    );
 
-void HandleClayErrors(Clay_ErrorData errorData) {
-    printf("%s", errorData.errorText.chars);
-}
+    //Load fonts after initializing raylib
+    fonts[0] = LoadFontEx("resources/Roboto-Regular.ttf", 48, 0, 400);
+    
+    //Set fonts texture filters
+    SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
 
-void DrawUI(Simulation sim) {
-    // Title and instructions
+    //Raylib render loop
+    while (!WindowShouldClose()) { 
+       
+        //Raylib mouse position and scroll vectors
+        Vector2 mousePosition = GetMousePosition(); 
+        Vector2 scrollDelta = GetMouseWheelMoveV(); 
+        
+        //Update clay state (window size, mouse position/scroll, time delta, left button state)
+        clayMan.updateClayState(
+            GetScreenWidth(), //Raylib window width
+            GetScreenHeight(), //Raylib window height
+            mousePosition.x, 
+            mousePosition.y, 
+            scrollDelta.x, 
+            scrollDelta.y, 
+            GetFrameTime(), //Raylib frame delta
+            IsMouseButtonDown(0) //Raylib left button down
+        );
 
-    int textWidth = MeasureText("Automata Simulation", 25); 
-	DrawText("Automata Simulation", (windowWidth - textWidth) / 2, 10, 25, LIGHTGRAY);
-    DrawText("Use mouse clicks to interact with the states", windowWidth / 2 - 150, windowHeight - 40, 20, GRAY);
+        //Prep for layout
+        clayMan.beginLayout();
+        
+        //Example full-window parent container
+        clayMan.element(
+            { //Configure element
+                .id = clayMan.hashID("YourElementID"),
+                .layout = {
+                    .sizing = clayMan.expandXY(), 
+                    .padding = clayMan.padAll(16), 
+                    .childGap = 16, 
+                    .layoutDirection = CLAY_TOP_TO_BOTTOM
+                },
+                .backgroundColor = {50,50,50,255}
+            },
+            [&]{ //Child elements in here
+                clayMan.textElement(
+                    "Here is some text",
+                    { //Configure text
+                        .textColor = {255,255,255,255},
+                        .fontId = 0, 
+                        .fontSize = 16
+                    }
+                );
+                
+            }
+        );
+        
+        //Pass your layout to the manager to get the render commands
+        Clay_RenderCommandArray renderCommands = clayMan.endLayout(); 
 
-    DrawRectangle(10, windowHeight - 120, 300, 100, DARKGRAY);
-    DrawText("Info Panel", 20, windowHeight - 110, 20, WHITE);
-	std::string s = "Total States:";
-	s.append(std::to_string(sim.automate.getStates().size()));
-    DrawText(s.c_str(), 20, windowHeight - 60, 20, WHITE);
-}
-
-int main()
-{
-    // init clay
-    uint64_t totalMemorySize = Clay_MinMemorySize();
-    Clay_Arena arena = Clay_CreateArenaWithCapacityAndMemory(totalMemorySize, malloc(totalMemorySize));
-    Clay_Initialize(arena, (Clay_Dimensions) { windowWidth, windowHeight }, (Clay_ErrorHandler) { HandleClayErrors });
-
-    InitWindow(windowWidth, windowHeight, "Automata Simulation");
-    SetTargetFPS(60);
-    Simulation simulation;
-  
-    ;
-    while (!WindowShouldClose()) {
-
-
-        // Optional: Update internal layout dimensions to support resizing
-        Clay_SetLayoutDimensions((Clay_Dimensions) { GetScreenWidth(), GetScreenHeight() });
-        // Optional: Update internal pointer position for handling mouseover / click / touch events - needed for scrolling & debug tools
-        Clay_SetPointerState((Clay_Vector2) { GetMouseY(), GetMouseY() }, IsMouseButtonDown(MOUSE_BUTTON_LEFT));
-        // Optional: Update internal pointer position for handling mouseover / click / touch events - needed for scrolling and debug tools
-        Clay_UpdateScrollContainers(true, (Clay_Vector2) { 0.0, GetMouseWheelMove() },  GetFrameTime());
-
-        // All clay layouts are declared between Clay_BeginLayout and Clay_EndLayout
-        Clay_BeginLayout();
-        // implementing clay Tree Hierachy
-        Clay_EndLayout();
-
-        BeginDrawing();
-        simulation.update();
-        ClearBackground(RAYWHITE);
-        DrawUI(simulation);
-        simulation.render();
-        EndDrawing();
+        BeginDrawing(); //Start Raylib's draw block
+        ClearBackground(BLACK); //Raylib's clear function
+        Clay_Raylib_Render(renderCommands, fonts); //Render Clay Layout
+        EndDrawing(); //End Raylib's draw block
     }
-
-    CloseWindow();
     return 0;
 }

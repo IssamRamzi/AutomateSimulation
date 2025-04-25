@@ -38,6 +38,8 @@ add_executable (AutomataSimulation
     "src/Statetype.cpp"
     "src/Transition.cpp"
     "src/Automata.cpp"
+    "src/thirdparty/clayman.cpp"
+   
 
 
 )
