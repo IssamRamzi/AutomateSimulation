@@ -7,8 +7,8 @@
 
 using namespace std;
 
-const int windowWidth = 1280;
-const int windowHeight = 720;
+const int windowWidth = 1600;
+const int windowHeight = 900;
 
 void DrawUI(Simulation sim) {
     // Title and instructions
@@ -29,7 +29,7 @@ int main(void) {
     Simulation simulation;
     Font fonts[1];
 
-    ClayMan clayMan(1204, 612, Raylib_MeasureText, fonts);
+    ClayMan clayMan(windowWidth, windowHeight, Raylib_MeasureText, fonts);
 
     Clay_Raylib_Initialize(
         clayMan.getWindowWidth(), 
@@ -175,7 +175,7 @@ int main(void) {
         Clay_Raylib_Render(renderCommands, fonts);
         ClearBackground(RAYWHITE);
 
-        DrawUI(simulation);
+        // DrawUI(simulation);
 
         simulation.render();
         EndDrawing();

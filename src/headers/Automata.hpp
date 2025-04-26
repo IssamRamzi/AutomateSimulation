@@ -3,6 +3,7 @@
 #include <string>
 #include "State.hpp"
 #include "Transition.hpp"
+#include "TextInputComponent.hpp"
 
 class Automata {
 private:
@@ -11,9 +12,12 @@ private:
     std::vector<Transition> transitions;
     std::vector<State> statesToLink;
     int currentStateValue = 1;
+	TextInputComponent motALire;
+
 
     // std::string word;
 
+    float tmp;
     static const int minDistance = 80;
 public:
     Automata();

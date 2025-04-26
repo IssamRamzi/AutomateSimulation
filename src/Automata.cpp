@@ -36,6 +36,8 @@ int Automata::findStateIndex(int value) const {
 // Mettre à jour tous les éléments de l'automate (états, liens, etc.)
 void Automata::updateAll()
 {
+    motALire.update();
+
     if(IsMouseButtonDown(MouseButton::MOUSE_BUTTON_LEFT)){
         State& state = getStateByClick();
         if(state.getValue() != nullState.getValue()){
@@ -88,15 +90,17 @@ void Automata::updateAll()
     }
 
     //read
+    bool result;
     if(IsKeyPressed(KEY_ENTER)){
-        readWord();
+        tmp = GetFrameTime();
+        result = readWord();
     }
-
 }
 
 // Dessiner tous les éléments de l'automate
 void Automata::drawAll()
 {
+    motALire.draw();
     if(statesToLink.size() == 1){
         DrawLineEx(statesToLink[0].getPosition(), GetMousePosition(), 3, BLACK);
     }
@@ -185,24 +189,21 @@ State& Automata::getStateByClick() {
 
 
 bool Automata::readWord() {
-    std::string word;
-    std::cout << "Enter your word : ";
-    std::cin >> word;  
+
+    std::string data = motALire.getData();
     if (initialStateIndex < 0 || initialStateIndex >= static_cast<int>(states.size())) {
         std::cout << "Pas d'état initial défini!" << std::endl;
         return false;
     }
-    
     State curr = states[initialStateIndex];
     
-    for (char c : word) {
-        // curr.printSucc();
+    for (char c : data) {
         bool found = false;
-        // std::cout << "NOMBRE DE SUCSESSEURS : " << curr.successors.size() << std::endl;
-        std::cout << "Dans l'etat : " << curr.getValue() << std::endl;
+        
+        std::string toDisplay = "Dans l'état : " + curr.getValue();
+        // DrawText(toDisplay.c_str(), 30,30,30,GREEN);
+        // std::cout << "Dans l'etat : " << curr.getValue() << std::endl;
         for (auto& [nextState, symbol] : curr.successors) {
-            std::cout << "Inside ReadWordLoop" << std::endl;
-            std::cout << "Symbole cherché: '" << c << "', Symbole trouvé: '" << symbol << "'" << std::endl;
             if (symbol == c) {
                 int nextStateIndex = findStateIndex(nextState.getValue());
                 if (nextStateIndex >= 0) {
@@ -212,7 +213,6 @@ bool Automata::readWord() {
                 }
             }
         }
-
         if (!found) {
             // std::cout << "ne reconnait pas 1" << std::endl;
             return false;
@@ -220,10 +220,10 @@ bool Automata::readWord() {
     }
 
     if (curr.getType() == StateType::FINALE) {
-        std::cout << "reconnait le mot " << word << std::endl;
+        std::cout << "reconnait le mot " << data << std::endl;
         return true;
     } else {
-        std::cout << "ne reconnait pas " << word << std::endl;
+        std::cout << "ne reconnait pas " << data << std::endl;
         return false;
     }
 }
