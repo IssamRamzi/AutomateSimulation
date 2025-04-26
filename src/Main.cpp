@@ -1,17 +1,13 @@
 ﻿#include "clayman.hpp"
 #include "raylib.h"
 #include "./thirdparty/raylib/clay_renderer_raylib.c"
+#include "Components.hpp"
 
-//Your project's main entry
 int main(void) {
-    
-    //Reserve memory for raylib fonts
     Font fonts[1];
 
-    //Initialize ClayMan object using the constructor
-    ClayMan clayMan(1024, 786, Raylib_MeasureText, fonts);
+    ClayMan clayMan(1204, 612, Raylib_MeasureText, fonts);
 
-    //Initialize Raylib
     Clay_Raylib_Initialize(
         clayMan.getWindowWidth(), 
         clayMan.getWindowHeight(), 
@@ -19,66 +15,141 @@ int main(void) {
         FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT
     );
 
-    //Load fonts after initializing raylib
     fonts[0] = LoadFontEx("resources/Roboto-Regular.ttf", 48, 0, 400);
-    
-    //Set fonts texture filters
     SetTextureFilter(fonts[0].texture, TEXTURE_FILTER_BILINEAR);
 
-    //Raylib render loop
     while (!WindowShouldClose()) { 
-       
-        //Raylib mouse position and scroll vectors
         Vector2 mousePosition = GetMousePosition(); 
         Vector2 scrollDelta = GetMouseWheelMoveV(); 
         
-        //Update clay state (window size, mouse position/scroll, time delta, left button state)
         clayMan.updateClayState(
-            GetScreenWidth(), //Raylib window width
-            GetScreenHeight(), //Raylib window height
+            GetScreenWidth(),
+            GetScreenHeight(),
             mousePosition.x, 
             mousePosition.y, 
             scrollDelta.x, 
             scrollDelta.y, 
-            GetFrameTime(), //Raylib frame delta
-            IsMouseButtonDown(0) //Raylib left button down
+            GetFrameTime(), 
+            IsMouseButtonDown(0)
         );
 
-        //Prep for layout
         clayMan.beginLayout();
-        
-        //Example full-window parent container
-        clayMan.element(
-            { //Configure element
-                .id = clayMan.hashID("YourElementID"),
+
+        clayMan.element({
+            .id = clayMan.hashID("App-Container"),
+            .layout = {
+                 .sizing = clayMan.expandXY(),
+                .padding = clayMan.padAll(16),
+                .childGap = 8,
+                .layoutDirection = CLAY_LEFT_TO_RIGHT
+            },
+            .backgroundColor = {50, 50, 50, 255}
+        }, [&] {
+            clayMan.openElement({
+                .id = clayMan.hashID("buttons zone"),
                 .layout = {
-                    .sizing = clayMan.expandXY(), 
-                    .padding = clayMan.padAll(16), 
-                    .childGap = 16, 
+                    .sizing = {
+                        .width = CLAY_SIZING_PERCENT(0.15),
+                        .height = CLAY_SIZING_GROW()
+                    },
                     .layoutDirection = CLAY_TOP_TO_BOTTOM
                 },
-                .backgroundColor = {50,50,50,255}
-            },
-            [&]{ //Child elements in here
-                clayMan.textElement(
-                    "Here is some text",
-                    { //Configure text
-                        .textColor = {255,255,255,255},
-                        .fontId = 0, 
-                        .fontSize = 16
-                    }
-                );
-                
+                .backgroundColor = {167, 153, 183, 255},
+            });
+            {
+                // buttons children
             }
-        );
-        
-        //Pass your layout to the manager to get the render commands
-        Clay_RenderCommandArray renderCommands = clayMan.endLayout(); 
+            clayMan.closeElement();
 
-        BeginDrawing(); //Start Raylib's draw block
-        ClearBackground(BLACK); //Raylib's clear function
-        Clay_Raylib_Render(renderCommands, fonts); //Render Clay Layout
-        EndDrawing(); //End Raylib's draw block
+            // --------------- canvas zone -------------- :
+
+            clayMan.openElement({
+                .id = clayMan.hashID("canvas zone"),
+                .layout = {
+                    .sizing = {
+                        .width = CLAY_SIZING_GROW(),
+                        .height = CLAY_SIZING_GROW()
+                    },
+                    .layoutDirection = CLAY_TOP_TO_BOTTOM
+                },
+                .backgroundColor = {167, 153, 183, 255},
+            });
+            {
+                // drawing zone 
+                clayMan.openElement({
+                    .layout = {
+                         
+                        .sizing = {
+                            .width = CLAY_SIZING_GROW(),
+                            .height = CLAY_SIZING_GROW(),
+                        }
+                    }
+                    
+
+                 });{
+
+                 }clayMan.closeElement();
+
+                 
+                 clayMan.openElement({
+                    
+                    // buttons zone
+                    .layout = {
+                        
+                        .sizing = {
+                            .width = CLAY_SIZING_GROW(),
+                            .height = CLAY_SIZING_PERCENT(0.1),
+                        },
+                        .padding = {140,140,10,10},
+                    },
+                   
+
+                 });{
+                    // buttons bar
+                    clayMan.openElement({
+                        .layout = {
+                            .sizing = {
+                                .width = CLAY_SIZING_GROW(),
+                                .height = CLAY_SIZING_GROW(),
+                            }
+                        },
+                        .backgroundColor = COLOR_CHINESE_VIOLET,
+                        .cornerRadius = { .topLeft = 8, .topRight = 8, .bottomLeft = 8, .bottomRight = 8 }
+
+                    });{}clayMan.closeElement();
+
+                 }clayMan.closeElement();
+            }
+            clayMan.closeElement();
+
+
+
+
+
+            // ----------------------------- :
+            clayMan.openElement({
+                .id = clayMan.hashID("status zone"),
+                .layout = {
+                    .sizing = {
+                        .width = CLAY_SIZING_PERCENT(0.15),
+                        .height = CLAY_SIZING_GROW()
+                    },
+
+                },
+                .backgroundColor = {255, 234, 0, 255}
+            });
+            {
+                // status children
+            }
+            clayMan.closeElement();
+        });
+
+        Clay_RenderCommandArray renderCommands = clayMan.endLayout();
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+        Clay_Raylib_Render(renderCommands, fonts);
+        EndDrawing();
     }
     return 0;
 }
